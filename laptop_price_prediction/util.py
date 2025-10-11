@@ -1,6 +1,7 @@
 import json
 import pickle
 import pandas as pd
+import os
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -20,37 +21,42 @@ def load_saved_artifacts():
     print("Loading saved artifacts...")
     global __companies, __type_names, __cpu_brands, __gpu_brands, __os_types
     global __numerical_features, __model, __scaler, __columns
-    
-    # Load feature columns
-    with open(r"C:\Users\Abeycity\Desktop\data science\laptop website\input_columns.json", "r") as f:
 
+    # ✅ Use relative paths so it works on server or locally
+    base_path = os.path.join(os.path.dirname(__file__), "artifacts")
+
+    # Load feature columns
+    json_path = os.path.join(base_path, "input_columns.json")
+    with open(json_path, "r") as f:
         all_columns = json.load(f)
         __columns = all_columns
-        
-        # Extract different categories and remove prefixes
+
+        # Extract categories and remove prefixes
         __companies = [col.replace("Company_", "") for col in all_columns if col.startswith("Company_")]
         __type_names = [col.replace("TypeName_", "") for col in all_columns if col.startswith("TypeName_")]
         __cpu_brands = [col.replace("Cpu brand_", "") for col in all_columns if col.startswith("Cpu brand_")]
         __gpu_brands = [col.replace("Gpu brand_", "") for col in all_columns if col.startswith("Gpu brand_")]
         __os_types = [col.replace("os_", "") for col in all_columns if col.startswith("os_")]
-        
+
         # Extract numerical features
         prefixed_columns = ["Company_", "TypeName_", "Cpu brand_", "Gpu brand_", "os_"]
         __numerical_features = [col for col in all_columns if not any(col.startswith(prefix) for prefix in prefixed_columns)]
-    
+
     # Load model
     import joblib
-    __model = joblib.load(r"C:\Users\Abeycity\Desktop\data science\laptop website\artifacts\best_model.pkl")
-    
-    # Try to load scaler
-    try:
-        with open(r"C:\Users\Abeycity\Desktop\data science\laptop website\scaler.pkl", 'rb') as f:
+    model_path = os.path.join(base_path, "best_model.pkl")
+    __model = joblib.load(model_path)
+
+    # Load scaler (optional)
+    scaler_path = os.path.join(base_path, "scaler.pkl")
+    if os.path.exists(scaler_path):
+        with open(scaler_path, 'rb') as f:
             __scaler = pickle.load(f)
         print("Scaler loaded successfully")
-    except FileNotFoundError:
+    else:
         print("Warning: scaler.pkl not found. Numeric features won't be scaled.")
         __scaler = None
-    
+
     print("Loading saved artifacts...done")
 
 def get_company_names():
@@ -75,49 +81,43 @@ def get_model():
     return __model
 
 def predict_price(model, laptop_features, columns):
-    """Your original prediction function"""
-    # Create a DataFrame from the input features
+    """Prediction function"""
     features_df = pd.DataFrame([laptop_features])
 
     # One-Hot Encode categorical features
     categorical_cols = ['Company', 'TypeName', 'Cpu brand', 'Gpu brand', 'os']
     features_df = pd.get_dummies(features_df, columns=categorical_cols, drop_first=True, dtype=int)
 
-    # Ensure the columns match the training data, adding missing columns with 0
+    # Ensure all columns exist
     for col in columns:
         if col not in features_df.columns:
             features_df[col] = 0
 
-    # Reorder columns to match the training data
+    # Reorder to match training
     features_df = features_df[columns]
 
-    # Scale numeric features using the same scaler as the training data
+    # Scale numeric features
     numeric_cols = ['Ram', 'Total_Storage']
     if __scaler is not None:
         features_df[numeric_cols] = __scaler.transform(features_df[numeric_cols])
     else:
         print("Warning: No scaler available. Using raw numeric values.")
 
-    # Drop the 'Price' column if it exists
-    if 'Price' in features_df.columns:
-        features_df = features_df.drop(columns=['Price'])
+    # Drop unwanted columns
+    for col in ['Price', 'index']:
+        if col in features_df.columns:
+            features_df = features_df.drop(columns=[col])
 
-    # Drop the 'index' column as it was dropped from X
-    if 'index' in features_df.columns:
-        features_df = features_df.drop(columns=['index'])
-
-    # Make prediction
     predicted_price = model.predict(features_df)
     return predicted_price[0]
 
 def get_estimated_price(company, ram, touchscreen, ips, total_storage, type_name, cpu_brand, gpu_brand, os_type):
-    """Get estimated price using your prediction function"""
+    """Estimate price"""
     if __model is None or __columns is None:
         print("Model or columns not loaded. Call load_saved_artifacts() first.")
         return None
-    
+
     try:
-        # Create laptop features dictionary
         laptop_features = {
             'Company': company,
             'Ram': ram,
@@ -129,14 +129,13 @@ def get_estimated_price(company, ram, touchscreen, ips, total_storage, type_name
             'Gpu brand': gpu_brand,
             'os': os_type
         }
-        
-        # Use your original prediction function
+
         estimated_price = predict_price(__model, laptop_features, __columns)
         estimated_price = round(estimated_price, 2)
-        
+
         print(f"Estimated price for {company} laptop: ${estimated_price}")
         return estimated_price
-        
+
     except Exception as e:
         print(f"Prediction error: {e}")
         return None
@@ -144,27 +143,27 @@ def get_estimated_price(company, ram, touchscreen, ips, total_storage, type_name
 def validate_inputs(company, type_name, cpu_brand, gpu_brand, os_type):
     """Validate input values"""
     validation = {'valid': True, 'errors': []}
-    
+
     if company not in __companies:
         validation['valid'] = False
         validation['errors'].append(f"Company '{company}' not found. Available: {__companies}")
-    
+
     if type_name not in __type_names:
         validation['valid'] = False
         validation['errors'].append(f"Type '{type_name}' not found. Available: {__type_names}")
-    
+
     if cpu_brand not in __cpu_brands:
         validation['valid'] = False
         validation['errors'].append(f"CPU brand '{cpu_brand}' not found. Available: {__cpu_brands}")
-    
+
     if gpu_brand not in __gpu_brands:
         validation['valid'] = False
         validation['errors'].append(f"GPU brand '{gpu_brand}' not found. Available: {__gpu_brands}")
-    
+
     if os_type not in __os_types:
         validation['valid'] = False
         validation['errors'].append(f"OS type '{os_type}' not found. Available: {__os_types}")
-    
+
     return validation
 
 if __name__ == '__main__':
@@ -177,18 +176,17 @@ if __name__ == '__main__':
     print(f"Operating Systems: {get_os_types()}")
     print(f"Numerical Features: {get_numerical_features()}")
     print(f"Model loaded: {__model is not None}")
-    
-    # Test prediction
+
     print("\n=== Test Prediction ===")
     if __companies and __type_names and __cpu_brands and __gpu_brands and __os_types:
         test_price = get_estimated_price(
-            company=__companies[0],  # First available company
+            company=__companies[0],
             ram=8,
             touchscreen=1,
             ips=1,
             total_storage=256,
-            type_name=__type_names[0],  # First available type
-            cpu_brand=__cpu_brands[0],  # First available CPU
-            gpu_brand=__gpu_brands[0],  # First available GPU
-            os_type=__os_types[0]  # First available OS
+            type_name=__type_names[0],
+            cpu_brand=__cpu_brands[0],
+            gpu_brand=__gpu_brands[0],
+            os_type=__os_types[0]
         )
