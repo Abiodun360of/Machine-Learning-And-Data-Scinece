@@ -1,6 +1,7 @@
 fastapi
 uvicorn
-tensorflow
+python-multipart
+tensorflow>=2.6
+gradio>=3.0
 pillow
 numpy
-python-multipart
