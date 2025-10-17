@@ -431,14 +431,12 @@ SOFTWARE.
 ```
 
 ---
-
 ## 📞 Contact
 
-**Your Name**
-- 📧 Email: your.email@example.com
-- 💼 LinkedIn: [linkedin.com/in/yourprofile](https://linkedin.com/in/yourprofile)
-- 🐙 GitHub: [@yourusername](https://github.com/yourusername)
-- 🌐 Portfolio: [yourportfolio.com](https://yourportfolio.com)
+Abiodun Ofobutu
+- 📧 Email: Abiodun360of@gmail.com
+- 💼 LinkedIn:(https://linkedin.com/in/Abiodun360of)
+- 🐙 GitHub:(https://github.com/Abiodun360of/
 
 **Project Link:** [https://github.com/yourusername/abuja-tree-planting-analysis](https://github.com/yourusername/abuja-tree-planting-analysis)
 
@@ -470,10 +468,10 @@ If you use this project in your research, please cite:
 
 ```bibtex
 @software{abuja_tree_planting_2024,
-  author = {Your Name},
-  title = {Abuja Tree Planting Site Selection Analysis},
+  author = {Abiodun Ofobutu},
+  title = {Tree Planting Optimization using Q-Learning},
   year = {2024},
-  url = {https://github.com/yourusername/abuja-tree-planting-analysis},
+  url = (https://github.com/Abiodun360of/Machine-Learning-And-Data-Scinece/),
   version = {1.0.0}
 }
 ```
@@ -927,7 +925,7 @@ SOFTWARE.
 
 ## 📞 Contact
 
-**Your Name**
+Abiodun Ofobutu
 - 📧 Email: Abiodun360of@gmail.com
 - 💼 LinkedIn:(https://linkedin.com/in/Abiodun360of)
 - 🐙 GitHub:(https://github.com/Abiodun360of/
