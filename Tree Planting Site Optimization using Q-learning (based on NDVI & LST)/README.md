@@ -236,7 +236,7 @@ analyzer.export_results()
 ### 🎨 Dataset Previews
 
 #### Infrastructure Overview
-![Infrastructure Preview](assets/infrastructure_preview.png)
+![Infrastructure Preview]Tree Planting Site Optimization using Q-learning (based on NDVI & LST)/image.png
 - **6-panel visualization** showing boundary, buildings, roads, waterways
 - Combined infrastructure layer
 - Comprehensive statistics table
