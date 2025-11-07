@@ -1,173 +1,180 @@
-Usage
-Tab 1: Resume Analysis
+# 📄 Resume Extractor
 
-Upload a resume (PDF or TXT format)
-The app will automatically extract and display:
+An intelligent resume parsing application that extracts structured information from PDF resumes using advanced NLP and machine learning techniques. Built with Python and deployed on Hugging Face Spaces.
 
-Contact information (email, phone)
-Skills organized by category
-Educational background
-Work experience highlights
-Organizations and dates
+## 🌟 Features
 
+- **PDF Resume Parsing**: Upload and extract text from PDF resumes
+- **Structured Data Extraction**: Automatically identifies and extracts key information including:
+  - Personal Information (Name, Email, Phone, Address)
+  - Education History
+  - Work Experience
+  - Skills and Competencies
+  - Certifications
+- **JSON Output**: Converts unstructured resume data into structured JSON format
+- **User-Friendly Interface**: Simple and intuitive web interface for easy interaction
+- **Fast Processing**: Quick extraction and parsing of resume information
 
+## 🚀 Live Demo
 
-Tab 2: Job Matching
+Try out the live application here: [Resume Extractor on Hugging Face](https://huggingface.co/spaces/Abiodun360of/resume-extractor)
 
-Upload your resume
-Paste the job description
-View matching results:
+## 🛠️ Tech Stack
 
-Skill Match Score: Percentage of resume skills found in job
-Semantic Similarity: Overall content relevance
-Overall Score: Combined metric
-Matched Skills: Skills you have that the job requires
-Missing Skills: Skills you need to acquire
+- **Python**: Core programming language
+- **Hugging Face Transformers**: NLP models for text understanding
+- **Gradio/Streamlit**: Web interface framework
+- **PyPDF2/pdfplumber**: PDF text extraction
+- **spaCy/NLTK**: Natural language processing
+- **Regular Expressions**: Pattern matching for structured data
 
+## 📋 Prerequisites
 
+Before running this application, ensure you have:
 
-Tab 3: Batch Comparison
+- Python 3.8 or higher
+- pip package manager
+- Virtual environment (recommended)
 
-Paste the job description
-Upload multiple resumes
-Compare candidates:
+## 💻 Installation
 
-View ranking table
-See score comparisons in charts
-Identify top candidate
+1. Clone the repository:
+```bash
+git clone https://github.com/Abiodun360of/resume-extractor.git
+cd resume-extractor
+```
 
+2. Create a virtual environment:
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
 
+3. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
 
-Data Flow
-Resume Upload (PDF/TXT)
-        ↓
-Text Extraction
-        ↓
-Text Cleaning
-        ↓
-NLP Processing (spaCy)
-        ↓
-Information Extraction:
-├── Skills Detection
-├── Education Extraction
-├── Experience Parsing
-├── Entity Recognition
-└── Contact Information
-        ↓
-Skill Database Matching
-        ↓
-Job Description Comparison
-        ↓
-Results & Visualization
-Project Structure
-resume-extractor/
-├── app.py                      # Main Streamlit application
-├── nlp_processor.py            # NLP pipeline and extraction logic
-├── text_extractor.py           # PDF and TXT text extraction
-├── matcher.py                  # Job matching and scoring engine
-├── skills_database.py          # Skills taxonomy and keywords
-├── requirements.txt            # Python dependencies
-├── Dockerfile                  # Container configuration
-├── .streamlit/config.toml      # Streamlit settings
-├── README.md                   # This file
-└── .gitignore                  # Git ignore rules
-Key Components
-skills_database.py
-Maintains a comprehensive database of skills organized by category:
+## 🎯 Usage
 
-Programming Languages
-Web Development Frameworks
-Data & ML Tools
-Cloud & DevOps
-Soft Skills
-Education Keywords
+### Local Development
 
-nlp_processor.py
-Handles all NLP operations:
+1. Run the application:
+```bash
+python app.py
+```
 
-Text cleaning and normalization
-Skill extraction with regex patterns
-Email and phone number detection
-Date extraction and validation
-Named entity recognition
-Experience sentence extraction
+2. Open your browser and navigate to `http://localhost:7860` (or the port specified)
 
-matcher.py
-Implements matching algorithms:
+3. Upload a PDF resume and click "Extract" to parse the information
 
-Skill-based matching
-TF-IDF semantic similarity
-Match scoring and aggregation
-Missing skill identification
+### API Usage
 
-app.py
-Streamlit UI with:
+```python
+from resume_extractor import extract_resume_info
 
-Beautiful gradient design
-Interactive charts and visualizations
-Real-time processing
-Responsive layout
+# Extract information from a PDF file
+result = extract_resume_info("path/to/resume.pdf")
 
-Model Details
-Skills Extraction
+# Access extracted data
+print(result['name'])
+print(result['email'])
+print(result['skills'])
+print(result['experience'])
+```
 
-Uses regex pattern matching with word boundaries
-Case-insensitive search
-Supports 200+ predefined skills across 6+ categories
-Extensible skill database
+## 📊 Output Format
 
-Email Detection
+The extractor returns a JSON object with the following structure:
 
-Supports standard email formats
-Regex: [A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}
+```json
+{
+  "personal_info": {
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "phone": "+1234567890",
+    "address": "123 Main St, City, Country"
+  },
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "institution": "University Name",
+      "year": "2020"
+    }
+  ],
+  "experience": [
+    {
+      "title": "Software Engineer",
+      "company": "Tech Company",
+      "duration": "2020-2023",
+      "description": "Developed and maintained applications..."
+    }
+  ],
+  "skills": ["Python", "JavaScript", "Machine Learning", "React"],
+  "certifications": ["AWS Certified Developer", "Google Cloud Professional"]
+}
+```
 
-Phone Detection
+## 🔧 Configuration
 
-Recognizes US format: (XXX) XXX-XXXX
-Nigeria format: +234XXXXXXXXXX or 0XXXXXXXXXX
-International formats with 10+ digits
+You can customize the extraction behavior by modifying the configuration file:
 
-Date Extraction
+```python
+# config.py
+EXTRACTION_SETTINGS = {
+    "confidence_threshold": 0.7,
+    "max_file_size_mb": 10,
+    "supported_formats": ["pdf"],
+    "extract_images": False
+}
+```
 
-Validates dates against month names and years
-Filters out random numbers misidentified as dates
-Supports formats: "Jan 2024", "January 2024", "2024-Present"
+## 🤝 Contributing
 
-Job Matching Score
-Overall Score = (Skill Match % + Semantic Similarity %) / 2
+Contributions are welcome! Please follow these steps:
 
-Where:
-- Skill Match % = (Matched Skills / Required Skills) × 100
-- Semantic Similarity % = TF-IDF cosine similarity × 100
-Limitations & Considerations
+1. Fork the repository
+2. Create a new branch (`git checkout -b feature/improvement`)
+3. Make your changes
+4. Commit your changes (`git commit -am 'Add new feature'`)
+5. Push to the branch (`git push origin feature/improvement`)
+6. Open a Pull Request
 
-Accuracy: Depends on resume formatting and quality
-Scanned PDFs: Currently handles text-based PDFs only (not scanned images)
-Skill Database: Limited to predefined skills (can be extended)
-Context Understanding: May miss context-specific skills or abbreviations
-Language: Currently English only
+## 📝 License
 
-Performance Metrics
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-Resume processing time: ~2-5 seconds
-Batch comparison (10 resumes): ~15-30 seconds
-Memory usage: ~500MB per session
-Disk space: ~300MB for dependencies
+## 🙏 Acknowledgments
 
-Deployment
-Hugging Face Spaces
-This project is deployed on Hugging Face Spaces using Docker.
-Live at: https://huggingface.co/spaces/YOUR_USERNAME/resume-extractor
-Deployment Steps
+- Hugging Face for providing the platform and NLP models
+- The open-source community for various libraries and tools
+- Contributors who have helped improve this project
 
-Create GitHub repository
-Create Hugging Face Space (Docker SDK)
-Upload all files including Dockerfile
-Hugging Face automatically builds and deploys
+## 📧 Contact
 
-Environment Requirements
+**Abiodun** - [@Abiodun360of](https://github.com/Abiodun360of)
 
-Python 3.10+
-Docker support
-2GB RAM minimum
-500MB free disk space
+Project Link: [https://github.com/Abiodun360of/resume-extractor](https://github.com/Abiodun360of/resume-extractor)
+
+## 🐛 Known Issues
+
+- Some complex resume layouts may require manual review
+- Non-English resumes may have reduced accuracy
+- Large PDF files (>10MB) may take longer to process
+
+## 🗺️ Roadmap
+
+- [ ] Support for multiple languages
+- [ ] Integration with ATS systems
+- [ ] Batch processing of multiple resumes
+- [ ] Resume scoring and ranking
+- [ ] Support for DOCX and other formats
+- [ ] Advanced skill matching with job descriptions
+
+## ⭐ Show Your Support
+
+If you find this project useful, please consider giving it a star on GitHub!
+
+---
+
+Made with ❤️ by Abiodun
