@@ -1,6 +1,6 @@
 
 GPU-Accelerated Land Cover Classification using CUDA and K-Means
-Overview
+Overview.
 
 This project demonstrates GPU acceleration for satellite image analysis using CUDA-based libraries. The goal is to compare CPU vs GPU performance for vegetation feature extraction and land cover classification.
 
